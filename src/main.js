@@ -5,7 +5,7 @@ const dashUrl = '/dash/manifest.mpd';
 const player = MediaPlayer().create();
 let Subexsub = new dashjs.ExternalSubtitle({
   id: 'external_1',
-  url: '/subs',
+  url: '/subs.vtt',
   mimeType: 'text/vtt',
   language: 'en',
   bandwidth: 256
@@ -17,66 +17,51 @@ player.addExternalSubtitle(Subexsub);
 //player.addExternalSubtitle()
 // a
 
-player.on("streamInitialized",() => {
+player.on("streamInitialized",async () => {
     console.log('DASH stream loaded, ready to play');
     console.log(`is text enabled: `,player.isTextEnabled());
 
-   
-(async () => {
-
-try {
-  // just need to have the frtonend have the url
-  // il just make it a button which fetches the subttiles
-
-  let subURL = await fetch_sub();
-  
-
-    let track = video.querySelector("track");
-    if (!track){
-          track = document.createElement("track");
-    track.kind = "subtitles";
-    track.srclang = "en";
-    track.label = "English";
-    track.default = true;
-    video.appendChild(track);
-    console.log("inside sub url thing");
+    try {
+    const subtitlesURL = await fetch_sub('/subs.vtt');
+    console.log(subtitlesURL);
+    setupSubs(video,subtitlesURL,'en',"English");
+    } catch (e) {
+      console.error("subtitles setup errore",e);
     }
-    track.src = subURL;
-
-  console.log("After SUB URL ",subURL);
-  } catch (e) {
-    console.error("subtutle setup error : ",e);
-  }
-
-  });
-
-
 console.log(video);
     
     });
 
 
 
-async function fetch_sub()  {
+ async function fetch_sub()  {
   //const subtitlespath = filePath.replace(/\.[^/.]+$/, ".vtt");
 
-  const subURL = `/subs`
+  const subURL = `/subs.vtt`
 
   try {
-    const res = await fetch(subURL, { method: "HEAD" });
-    if (!res.ok) {
-      console.log("here would place logic for creaing the ffmpeg subtitles");
-
-      throw new Error(`Failed to fetch subtitles (${res.status})`);
-      
-    }
+    const res =  await fetch(subURL, { method: "HEAD" });
+    if (!res.ok) throw new Error(`Failed to fetch subtitles (${res.status})`);
+    return url;
   } catch (err) {
     console.error(`Could not find subtitles file for ${subURL}`, err);
+    return null
       }
+}
 
-  return subURL;
-
-
+function setupSubs(video,src,lang,label){
+  if (!src) return;
+  let track = video.querySelector(`track[srclang="${lang}"]`);
+  if (!track) {
+    track = document.createElement('track');
+    track.kind = 'subtitles';
+    track.srclang = lang;
+    track.label = label;
+    track.default = true;
+    video.appendChild(track);
+  }
+  track.src = src;
+  console.log(`Subtitles track added : ${src}`);
 }
 
 
@@ -96,4 +81,3 @@ async function fetch_sub()  {
 //   // Safari native support
 //   video.src = hlsUrl;
 // }
-

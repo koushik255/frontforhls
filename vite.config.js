@@ -9,7 +9,7 @@ export default defineConfig({
         changeOrigin: true,
       },
       // Proxy subtitles
-      '/subs': {
+      '/subs.vtt': {
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
