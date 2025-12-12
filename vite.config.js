@@ -13,6 +13,17 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
+      //proxy stats
+      '/stats':{
+        target: 'http://localhost:8080',
+        changeOrigin:true,
+      },
+      //
+       '/api/seek':{
+        target: 'http://localhost:8080',
+        changeOrigin:true,
+      },
+
     },
   },
 });

@@ -27,6 +27,7 @@ player.on("streamInitialized",async () => {
     console.log(duration);
     let currentTime = 300;
     player.seek(currentTime +20);
+    createButton();
        
     try {
     //const subtitlesURL = await fetch_sub('/subs.vtt');
@@ -40,6 +41,42 @@ player.on("streamInitialized",async () => {
 console.log(video);
     
     });
+
+// async function fetch_stats() {
+
+//   try {
+//     const tt
+//   }
+// }
+//
+function createButton(){
+  const buttonContainer = document.createElement('div');
+  const seekButton = document.createElement('button');
+  seekButton.textContent = 'Seek';
+  seekButton.onclick = () => sendRequest("300");
+
+  buttonContainer.appendChild(seekButton);
+  document.body.appendChild(buttonContainer);
+}
+
+async function sendRequest(timeInSeconds) {
+  let seekData = {
+    time: timeInSeconds,
+  }
+   try {
+    const response = await fetch('/api/seek', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(seekData)
+    });
+    const result = await response.json();
+    console.log('reponse: ',result);
+  } catch (error) {
+    console.error("error",error);
+  }
+}
 
 
 
