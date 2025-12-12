@@ -25,7 +25,7 @@ player.on("streamInitialized",async () => {
     video.currentTime = 300;
     let duration = player.duration();
     console.log(duration);
-    let currentTime = 700;
+    let currentTime = 300;
     player.seek(currentTime +20);
        
     try {
