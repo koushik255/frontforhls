@@ -10,6 +10,8 @@ let Subexsub = new dashjs.ExternalSubtitle({
   language: 'en',
   bandwidth: 256
 });
+player.getSettings().streaming.buffer.fastSwitchEnabled = true;
+player.getSettings().streaming.abr.autoSwitchBitrate.video = true;
 player.initialize(video, dashUrl, true);
 player.addExternalSubtitle(Subexsub);
 
@@ -20,12 +22,19 @@ player.addExternalSubtitle(Subexsub);
 player.on("streamInitialized",async () => {
     console.log('DASH stream loaded, ready to play');
     console.log(`is text enabled: `,player.isTextEnabled());
-
+    video.currentTime = 300;
+    let duration = player.duration();
+    console.log(duration);
+    let currentTime = 700;
+    player.seek(currentTime +20);
+       
     try {
-    const subtitlesURL = await fetch_sub('/subs.vtt');
-    console.log(subtitlesURL);
-    setupSubs(video,subtitlesURL,'en',"English");
+    //const subtitlesURL = await fetch_sub('/subs.vtt');
+    //console.log(subtitlesURL);
+   // setupSubs(video,'/subs.vtt','en',"English");
+   console.log("diddy");
     } catch (e) {
+      console.log("subtitles no work");
       console.error("subtitles setup errore",e);
     }
 console.log(video);
@@ -58,8 +67,11 @@ function setupSubs(video,src,lang,label){
     track.srclang = lang;
     track.label = label;
     track.default = true;
+    //track.currentTime = 300;
+    
     video.appendChild(track);
   }
+  
   track.src = src;
   console.log(`Subtitles track added : ${src}`);
 }
